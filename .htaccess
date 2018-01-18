@@ -8,3 +8,8 @@ RewriteRule ^small\/([^\/]+)\/?$    %{ENV:BASE}display/resize.php?img=$1&cat=sma
 RewriteRule ^medium\/([^\/]+)\/?$   %{ENV:BASE}display/resize.php?img=$1&cat=medium&size=800 [QSA,L]
 RewriteRule ^large\/([^\/]+)\/?$    %{ENV:BASE}display/resize.php?img=$1&cat=large&size=1000 [QSA,L]
 RewriteRule ^([^\/]+)\/?$           %{ENV:BASE}img/$1 [QSA,L]
+
+<Files "update.sh">
+Order Allow,Deny
+Deny from all
+</Files>
