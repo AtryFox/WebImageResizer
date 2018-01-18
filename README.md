@@ -3,7 +3,7 @@ WebImageResizer
 
 Simple tool to automatically resize uploaded images when demanded.
 
-Made with the power of [Intervention Image](/Intervention/image).
+Made with the power of [Intervention Image](https://github.com/Intervention/image).
 
 
 ## Requirements ##
