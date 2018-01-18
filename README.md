@@ -32,7 +32,7 @@ Let's say, you upload an image named `foo_bar.png`.
 
 You can access the original image, unscaled under `./foo_bar.png`.
 
-If you want to a resized version, open `./[size]/foo_bar.png`.
+If you want to view a resized version, open `./[size]/foo_bar.png`.
 Replace `[size]` with one of the following options:
 
 | Size category  | Length of the longer side |
