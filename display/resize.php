@@ -6,21 +6,40 @@ class Resize
 {
     function __construct($file, $category, $size)
     {
-        $manager = new ImageManager(array('driver' => 'imagick'));
-
-        $path = "../img/" . $category . "/" . $file;
-
-        if (is_file($path)) {
-            echo $manager->make($path)->response();
+        function err($status) {
+            header("HTTP/1.0 " . $status);
+            echo "<h1>" . $status . "</h1>";
             exit;
         }
 
-        $image = $manager->make("../img/" . $file);
+        $manager = new ImageManager(array('driver' => 'imagick'));
+
+        $categoryPath = "../img/" . $category . "/" . $file;
+        $fullPath = "../img/" . $file;
+
+        if (!is_file($fullPath)) {
+            err("404 Not Found");
+        }
+
+        if (is_file($categoryPath)) {
+            try {
+                echo $manager->make($categoryPath)->response();
+                exit;
+            } catch (Exception $exception) {
+                err("415 Unsupported Media Type");
+            }
+        }
+
+        try {
+            $image = $manager->make($fullPath);
+        } catch (Exception $exception) {
+            err("415 Unsupported Media Type");
+        }
 
         $width = $image->width();
         $height = $image->height();
 
-        if(max($width, $height) <= $size) {
+        if (max($width, $height) <= $size) {
             echo $image->response();
             exit();
         }
@@ -29,11 +48,15 @@ class Resize
             $constraint->aspectRatio();
         });
 
-        if(!is_dir("../img/" .$category)) {
-            mkdir("../img/" .$category);
+        if (!is_dir("../img/" . $category)) {
+            mkdir("../img/" . $category);
         }
 
-        $image->save($path);
+
+        try {
+            $image->save($categoryPath);
+        } catch (Exception $exception) {
+        }
 
         echo $image->response();
 
