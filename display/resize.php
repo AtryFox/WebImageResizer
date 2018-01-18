@@ -21,7 +21,7 @@ class Resize
             err("404 Not Found");
         }
 
-        if (is_file($categoryPath)) {
+        if (is_file($categoryPath) && !isset($_GET["force"])) {
             try {
                 echo $manager->make($categoryPath)->response();
                 exit;
