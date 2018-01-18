@@ -44,7 +44,7 @@ class Resize
             exit();
         }
 
-        $image->resize($width >= $height ? $size : null, $width < $height ? null : $size, function ($constraint) {
+        $image->resize($width >= $height ? $size : null, $width >= $height ? null : $size, function ($constraint) {
             $constraint->aspectRatio();
         });
 
