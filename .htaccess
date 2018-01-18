@@ -1,0 +1,10 @@
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME}     !-f
+RewriteCond %{REQUEST_FILENAME}     !-d
+RewriteCond %{REQUEST_URI}::$1 ^(.*?/)(.*)::\2$
+RewriteRule ^(.*)$ - [E=BASE:%1]
+RewriteRule ^thumb\/([^\/]+)\/?$    %{ENV:BASE}display/resize.php?img=$1&cat=thumb&size=200 [QSA,L]
+RewriteRule ^small\/([^\/]+)\/?$    %{ENV:BASE}display/resize.php?img=$1&cat=small&size=500 [QSA,L]
+RewriteRule ^medium\/([^\/]+)\/?$   %{ENV:BASE}display/resize.php?img=$1&cat=medium&size=800 [QSA,L]
+RewriteRule ^large\/([^\/]+)\/?$    %{ENV:BASE}display/resize.php?img=$1&cat=large&size=1000 [QSA,L]
+RewriteRule ^([^\/]+)\/?$           %{ENV:BASE}img/$1 [QSA,L]
