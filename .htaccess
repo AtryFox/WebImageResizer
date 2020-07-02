@@ -9,11 +9,9 @@ RewriteRule ^medium\/([^\/]+)\/?$   %{ENV:BASE}display/resize.php?img=$1&cat=med
 RewriteRule ^large\/([^\/]+)\/?$    %{ENV:BASE}display/resize.php?img=$1&cat=large&size=1000 [QSA,L]
 RewriteRule ^([^\/]+)\/?$           %{ENV:BASE}img/$1 [QSA,L]
 
+RedirectMatch 403 /\.git
+
 <Files "update.sh">
 Order Allow,Deny
 Deny from all
 </Files>
-
-<DirectoryMatch "^/.*/\.git/">
-    Require all denied
-</DirectoryMatch>
