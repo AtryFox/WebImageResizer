@@ -1,15 +1,20 @@
 FROM php as BuildContainer
-RUN apt update && apt install git libzip-dev -y && pecl install zip && docker-php-ext-enable zip
-RUN cd /usr/src && php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" \
-&& php -r "if (hash_file('sha384', 'composer-setup.php') === '48e3236262b34d30969dca3c37281b3b4bbe3221bda826ac6a9a62d6444cdb0dcd0615698a5cbe587c3f0fe57a54d8f5') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;" && \
-php composer-setup.php --install-dir=/usr/local/bin --filename=composer && php -r "unlink('composer-setup.php');" && \
-chmod +x /usr/local/bin/composer
+RUN apt update; apt install -y wget git libzip-dev
+RUN pecl install zip; docker-php-ext-enable zip
+RUN EXPECTED_CHECKSUM="$(wget -q -O - https://composer.github.io/installer.sig)"
+RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+RUN ACTUAL_CHECKSUM="$(php -r "echo hash_file('sha384', 'composer-setup.php');")"
+RUN if [ "$EXPECTED_CHECKSUM" != "$ACTUAL_CHECKSUM" ]; then >&2 echo 'ERROR: Invalid installer checksum' && rm composer-setup.php && exit 1; fi
+RUN php composer-setup.php --quiet --install-dir=/bin --filename=composer
+RUN rm composer-setup.php
+RUN composer --version
 COPY . /usr/src/WebimageResizer
-RUN cd /usr/src/WebimageResizer/display && composer -n i
+RUN cd /usr/src/WebimageResizer/display; composer -n i
 
 FROM php:apache
-RUN apt update && apt install libmagick++-dev -y && pecl install imagick && docker-php-ext-enable imagick && \
-a2enmod rewrite
+ADD https://raw.githubusercontent.com/mlocati/docker-php-extension-installer/master/install-php-extensions /usr/local/bin/
+
+RUN chmod +x /usr/local/bin/install-php-extensions; sync; install-php-extensions imagick
 
 COPY --from=BuildContainer /usr/src/WebimageResizer /var/www/html
 RUN mkdir /var/www/html/img
